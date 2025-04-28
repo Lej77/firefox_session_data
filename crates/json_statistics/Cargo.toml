@@ -1,0 +1,14 @@
+[package]
+name = "json_statistics"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license = "MIT OR Apache-2.0"
+
+[features]
+with_num_format = ["num-format"]
+
+[dependencies]
+num-format = { optional = true, version = "0.4.0" }
+serde_json = "1.0.57"
+either = "1.6.0"

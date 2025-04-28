@@ -1,0 +1,8 @@
+
+[target.wasm32-wasip1]
+runner = "deno run --allow-env --allow-read deno_wasi_snapshot_preview1.runner.ts"
+# runner = "wasmtime -S inherit-env=y"
+
+[target.wasm32-wasip2]
+# runner = "deno run --allow-env --allow-read deno_wasi_snapshot_preview2.runner.ts"
+runner = "wasmtime run -S preview2=y -S inherit-env=y"

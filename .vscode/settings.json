@@ -1,0 +1,17 @@
+{
+    "cSpell.words": [
+        "addon's",
+        "chromiumoxide",
+        "Deduplication",
+        "HIGHCOMPRESSION",
+        "inplace",
+        "sidebery",
+        "sizemode",
+        "tabview",
+        "ttlf",
+        "Weasy",
+        "wkhtml",
+        "wkhtmltopdf"
+    ],
+    "deno.enable": true
+}

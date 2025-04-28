@@ -1,0 +1,162 @@
+[package]
+name = "firefox_session_data"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license = "MIT OR Apache-2.0" # But complete program might need to be licensed under AGPL if all features are enabled.
+description = """
+Tool for interacting with Firefox "sessionstore" data which contains info about all currently open Firefox windows (and recently closed ones).
+"""
+
+[features]
+default = [
+    "compression_lz4",
+    "with_num_format",
+    "serde_path_to_error",
+    # PDF output generators:
+    "chromiumoxide_conversion",
+    "typst_pdf",
+    "typst_embed_fonts",
+]
+
+# Determine what compression methods are available.
+compression_all = ["firefox_compression/compression_all"]
+compression_compress = ["firefox_compression/compression_compress"]
+compression_lz4 = ["firefox_compression/compression_lz4"]
+compression_lz4_compression = ["firefox_compression/compression_lz4_compression"]
+compression_lz4_compress = ["firefox_compression/compression_lz4_compress"]
+compression_lz4_flex = ["firefox_compression/compression_lz4_flex"]
+compression = ["firefox_compression/compression"]
+
+# Use num-format for better printing of numbers when analyzing JSON data.
+with_num_format = ["json_statistics/num-format"]
+
+# Better errors when parsing of JSON fails:
+serde_path_to_error = ["dep:serde_path_to_error"]
+
+
+# Shorthand to easily enable all HTML to PDF features.
+html_to_pdf_all = [
+    "wk_html_to_pdf",
+    "wk_html_to_pdf_include_dll", # LGPL-3.0
+    "wk_html_to_pdf_compression",
+    "to_pdf_dotnet_itext",
+    "to_pdf_dotnet_framework_itext",
+    "to_pdf_dotnet_itext_include_exe", # AGPL-3.0
+    "chromiumoxide_conversion",
+]
+
+# Basic support for using wkhtml as a library. Requires ".dll" file to be present or the conversion will return an error.
+wk_html_to_pdf = ["dep:html_to_pdf_adapter_wkhtml"]
+# Link directly to the wkhtml library (".dll") file. If the file isn't present then this program won't start.
+wk_html_to_pdf_link = ["wk_html_to_pdf", "html_to_pdf_adapter_wkhtml/should_link"]
+# Include the wkhtml library (".dll") file inside this binary (will increase binary size) (Warning: LGPL-3.0).
+wk_html_to_pdf_include_dll = ["wk_html_to_pdf", "html_to_pdf_adapter_wkhtml/should_include_dll"]
+# Compress files that are included in the binary. (Currently only affects the ".dll" file since that is much larger.)
+wk_html_to_pdf_compression = ["wk_html_to_pdf", "html_to_pdf_adapter_wkhtml/compression"]
+
+# Support simple .Net Core cli program that uses the iText library
+to_pdf_dotnet_itext = ["dep:html_to_pdf_adapter_dotnet_itext"]
+# Support simple .Net Framework cli program that uses the iText library (smaller binary since it depends on an existing .Net install)
+to_pdf_dotnet_framework_itext = ["dep:html_to_pdf_adapter_dotnet_framework_itext"]
+
+# Embed the simple .Net executable inside this program (Warning: AGPL-3.0)
+to_pdf_dotnet_itext_include_exe = [
+    "html_to_pdf_adapter_dotnet_itext?/include_exe",
+    "html_to_pdf_adapter_dotnet_framework_itext?/include_exe",
+]
+# Compress the included exe:
+to_pdf_dotnet_itext_compress_exe = [
+    "html_to_pdf_adapter_dotnet_itext?/compression"
+]
+
+# Support using Chrome to convert HTML to PDF.
+chromiumoxide_conversion = ["dep:html_to_pdf_adapter_chromiumoxide"]
+
+
+# Output PDF using Typst.
+typst_pdf = [
+    "dep:typst",
+    "dep:comemo",
+    "dep:typst-pdf",
+    "dep:time",
+    "dep:ttf-parser",
+    "dep:typst-kit",
+]
+# Support downloading Typst packages.
+typst_packages = [
+    "dep:zune-inflate",
+    "dep:tar",
+    "dep:ureq",
+]
+# Allow Typst to load fonts from the system.
+typst_system_fonts = ["typst-kit?/packages"]
+# Include default font for Typst.
+typst_embed_fonts = ["typst-kit?/embed-fonts"]
+
+
+# Prevent terminals opening in background for GUI programs on Windows:
+windows-gui = [
+    "html_to_pdf_adapter_dotnet_framework_itext?/windows-gui",
+    "html_to_pdf_adapter_dotnet_itext?/windows-gui",
+    "html_to_pdf_adapter_wkhtml?/windows-gui",
+]
+
+
+[dependencies]
+firefox_compression = { path = "../firefox_compression" }
+json_statistics = { path = "../json_statistics" }
+firefox_session_store = { path = "../firefox_session_store", features = ["view"] }
+
+# Serialization:
+serde = { version = "1.0.115" }
+serde_json = "1.0.57"
+serde_path_to_error = { version = "0.1.14", optional = true }
+url = "2.2.2"
+html_to_pdf =  { git = "https://github.com/Lej77/html_to_pdf.git", tag ="v0.1.0" }
+
+# Utility:
+clap = { version = "4", features = ["derive"] }
+either = "1.6.0"
+
+# Error handling:
+eyre = "0.6.0"
+color-eyre = { version = "0.6.1", default-features = false }
+
+# Logging:
+log = "0.4.11"
+env_logger = "0.9.0"
+chrono = "0.4.15"
+
+
+# Typst (essentials):
+typst = { version = "0.13", optional = true }
+comemo = { version = "0.4", optional = true }
+
+# Typst (formats):
+typst-pdf = { version = "0.13", optional = true }
+
+# Typst (utils):
+time = { version = "0.3", optional = true }
+ttf-parser = { version = "0.25", optional = true }
+typst-kit = { version = "0.13.1", default-features = false, features = ["fonts"], optional = true }
+
+# Typst (fetching and unzipping packages):
+zune-inflate = { version = "0.2", optional = true, default-features = false, features = ["gzip", "std",] }
+tar = { version = "0.4", optional = true }
+ureq = { version = "2.9", optional = true }
+
+
+
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
+# HTML to PDF conversion:
+html_to_pdf_adapter_dotnet_framework_itext = { optional = true, git = "https://github.com/Lej77/html_to_pdf.git", tag ="v0.1.0" }
+html_to_pdf_adapter_dotnet_itext = { optional = true, git = "https://github.com/Lej77/html_to_pdf.git", tag ="v0.1.0" }
+html_to_pdf_adapter_wkhtml = { optional = true, git = "https://github.com/Lej77/html_to_pdf.git", tag ="v0.1.0" }
+html_to_pdf_adapter_chromiumoxide = { optional = true, git = "https://github.com/Lej77/html_to_pdf.git", tag ="v0.1.0" }
+
+
+[[bin]]
+name = "firefox-session-data" # Names of CLI tools use kebab-case by convention.
+path = "src/main.rs"
+required-features = []
