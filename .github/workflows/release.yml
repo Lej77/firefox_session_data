@@ -1,0 +1,66 @@
+name: 'Publish new release'
+
+on:
+  push:
+    tags: ['v*']
+
+# This workflow will trigger on each push of a tag that starts with a "v" to create or update a GitHub release, build your app, and upload the artifacts to the release.
+# More info at:
+# https://tauri.app/distribute/pipelines/github/
+# https://github.com/tauri-apps/tauri-action/
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: 'macos-latest' # for Arm based macs (M1 and above).
+            target: 'aarch64-apple-darwin'
+            upload: 'aarch64-apple-darwin/release/firefox-session-data'
+            upload_name: 'firefox-session-data-aarch64-apple-darwin'
+            
+          - platform: 'macos-latest' # for Intel based macs.
+            target: 'x86_64-apple-darwin'
+            upload: 'x86_64-apple-darwin/release/firefox-session-data'
+            upload_name: 'firefox-session-data-x86_64-apple-darwin'
+
+          - platform: 'ubuntu-22.04'
+            target: ''
+            upload: 'release/firefox-session-data'
+            upload_name: 'firefox-session-data-ubuntu-22.04'
+
+          - platform: 'ubuntu-22.04'
+            target: 'wasm32-wasip1'
+            upload: 'wasm32-wasip1/release/firefox-session-data.wasm'
+            upload_name: 'firefox-session-data-wasip1.wasm'
+
+          - platform: 'ubuntu-22.04'
+            target: 'wasm32-wasip2'
+            upload: 'wasm32-wasip2/release/firefox-session-data.wasm'
+            upload_name: 'firefox-session-data-wasip2.wasm'
+
+          - platform: 'windows-latest'
+            target: ''
+            upload: 'release/firefox-session-data.exe'
+            upload_name: 'firefox-session-data-x86_64-windows.exe'
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Build release binary
+        run: cargo build --release ${{ matrix.target != "" && "--target" || "" }} ${{ matrix.target }}
+
+      - name: Rename
+        run: mv ${{ matrix.upload }} ${{ matrix.upload_name }}
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          path: ${{ matrix.upload_name }}
