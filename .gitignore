@@ -9,3 +9,7 @@ rust-toolchain.toml
 # Local development:
 .vscode/launch.json
 todo.md
+# Added by goreleaser init:
+dist/
+.intentionally-empty-file.o
+target/

@@ -87,7 +87,7 @@ const CLOCKID_THREAD_CPUTIME_ID = 3;
 
 const ERRNO_SUCCESS = 0;
 const _ERRNO_2BIG = 1;
-const ERRNO_ACCES = 2;
+const ERRNO_ACCESS = 2;
 const ERRNO_ADDRINUSE = 3;
 const ERRNO_ADDRNOTAVAIL = 4;
 const _ERRNO_AFNOSUPPORT = 5;
@@ -298,7 +298,7 @@ function syscall<T extends CallableFunction>(target: T) {
           return ERRNO_NOENT;
 
         case "PermissionDenied":
-          return ERRNO_ACCES;
+          return ERRNO_ACCESS;
 
         case "ConnectionRefused":
           return ERRNO_CONNREFUSED;

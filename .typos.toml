@@ -1,0 +1,10 @@
+# https://github.com/crate-ci/typos
+# install:  cargo install typos-cli
+# run:      typos
+
+files.extend-exclude = [
+    "crates/firefox_compression/src/expected/sessionstore.json",
+]
+
+[default.extend-words]
+typ = "typ"
