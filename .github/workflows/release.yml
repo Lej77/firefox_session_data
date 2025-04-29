@@ -5,9 +5,13 @@ on:
     tags: ['v*']
 
 # This workflow will trigger on each push of a tag that starts with a "v" to create or update a GitHub release, build your app, and upload the artifacts to the release.
-# More info at:
-# https://tauri.app/distribute/pipelines/github/
-# https://github.com/tauri-apps/tauri-action/
+# Useful links:
+# https://github.com/marketplace/actions/build-and-upload-rust-binary-to-github-releases
+# https://github.com/marketplace/actions/rust-release-binary
+# https://github.com/cargo-bins/cargo-binstall/blob/main/.github/workflows/release-packages.yml
+# https://github.com/trunk-rs/trunk/blob/main/.github/workflows/release.yaml
+# https://goreleaser.com/quick-start/
+
 
 jobs:
   build:
@@ -17,33 +21,24 @@ jobs:
         include:
           - platform: 'macos-latest' # for Arm based macs (M1 and above).
             target: 'aarch64-apple-darwin'
-            upload: 'aarch64-apple-darwin/release/firefox-session-data'
-            upload_name: 'firefox-session-data-aarch64-apple-darwin'
             
           - platform: 'macos-latest' # for Intel based macs.
             target: 'x86_64-apple-darwin'
-            upload: 'x86_64-apple-darwin/release/firefox-session-data'
-            upload_name: 'firefox-session-data-x86_64-apple-darwin'
 
           - platform: 'ubuntu-22.04'
-            target: ''
-            upload: 'release/firefox-session-data'
-            upload_name: 'firefox-session-data-ubuntu-22.04'
+            target: 'x86_64-unknown-linux-gnu'
 
           - platform: 'ubuntu-22.04'
             target: 'wasm32-wasip1'
-            upload: 'wasm32-wasip1/release/firefox-session-data.wasm'
-            upload_name: 'firefox-session-data-wasip1.wasm'
+            ext: 'wasm'
 
           - platform: 'ubuntu-22.04'
             target: 'wasm32-wasip2'
-            upload: 'wasm32-wasip2/release/firefox-session-data.wasm'
-            upload_name: 'firefox-session-data-wasip2.wasm'
+            ext: 'wasm'
 
           - platform: 'windows-latest'
-            target: ''
-            upload: 'release/firefox-session-data.exe'
-            upload_name: 'firefox-session-data-x86_64-windows.exe'
+            target: 'x86_64-pc-windows-msvc'
+            ext: 'exe'
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -55,12 +50,52 @@ jobs:
           targets: ${{ matrix.target }}
 
       - name: Build release binary
-        run: cargo build --release ${{ matrix.target != "" && "--target" || "" }} ${{ matrix.target }}
+        run: cargo build --release --target ${{ matrix.target }}
 
-      - name: Rename
-        run: mv ${{ matrix.upload }} ${{ matrix.upload_name }}
+      - name: Post Build | Move and rename binary
+        run: |
+          mkdir uploads
+          mv target/${{ matrix.target }}/release/firefox-session-data${{ matrix.ext }} uploads/firefox-session-data-${{ matrix.target }}${{ matrix.ext }}
 
-      - name: Upload binary
+      - name: Post Build | Prepare artifacts [zip]
+        if: matrix.platform == windows-latest
+        working-directory: upload
+        run: |
+          7z a ${{ matrix.name }} trunk${{matrix.ext}}
+
+      - name: Post Build | Prepare artifacts [tar.gz]
+        if: matrix.platform != windows-latest
+        working-directory: upload
+        run: |
+          tar czvf ${{ matrix.name }} trunk${{matrix.ext}}
+
+      - name: Post Build | Upload binary
         uses: actions/upload-artifact@v4
         with:
-          path: ${{ matrix.upload_name }}
+          path: uploads/*
+          retention-days: 1
+          if-no-files-found: error
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write
+    steps:
+      - name: Download binary from previous job
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Display structure of downloaded files
+        run: ls -R
+
+      # Upload release asset:  https://github.com/actions/upload-release-asset
+      # which recommends:      https://github.com/softprops/action-gh-release
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
+        with:
+          files: artifacts/*
