@@ -21,7 +21,7 @@ jobs:
         include:
           - platform: 'macos-latest' # for Arm based macs (M1 and above).
             target: 'aarch64-apple-darwin'
-            
+
           - platform: 'macos-latest' # for Intel based macs.
             target: 'x86_64-apple-darwin'
 
@@ -59,15 +59,23 @@ jobs:
 
       - name: Post Build | Prepare artifacts [zip]
         if: matrix.platform == 'windows-latest'
-        working-directory: upload
+        working-directory: uploads
         run: |
-          7z a ${{ matrix.name }} trunk${{matrix.ext}}
+          7z a firefox-session-data-${{ matrix.target }}.zip firefox-session-data-${{ matrix.target }}${{ matrix.ext }}
 
       - name: Post Build | Prepare artifacts [tar.gz]
         if: matrix.platform != 'windows-latest'
-        working-directory: upload
+        working-directory: uploads
         run: |
-          tar czvf ${{ matrix.name }} trunk${{matrix.ext}}
+          tar --create --gzip --verbose --file  firefox-session-data-${{ matrix.target }}.tar.gz firefox-session-data-${{ matrix.target }}${{ matrix.ext }}
+
+      - name: Post Build | Remove binary (now inside compressed artifact)
+        working-directory: uploads
+        run: |
+          rm firefox-session-data-${{ matrix.target }}${{ matrix.ext }}
+
+      - name: Display structure of uploads folder
+        run: ls uploads -R
 
       - name: Post Build | Upload binary
         uses: actions/upload-artifact@v4
