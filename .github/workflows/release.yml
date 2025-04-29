@@ -58,13 +58,13 @@ jobs:
           mv target/${{ matrix.target }}/release/firefox-session-data${{ matrix.ext }} uploads/firefox-session-data-${{ matrix.target }}${{ matrix.ext }}
 
       - name: Post Build | Prepare artifacts [zip]
-        if: matrix.platform == windows-latest
+        if: matrix.platform == 'windows-latest'
         working-directory: upload
         run: |
           7z a ${{ matrix.name }} trunk${{matrix.ext}}
 
       - name: Post Build | Prepare artifacts [tar.gz]
-        if: matrix.platform != windows-latest
+        if: matrix.platform != 'windows-latest'
         working-directory: upload
         run: |
           tar czvf ${{ matrix.name }} trunk${{matrix.ext}}
