@@ -2,7 +2,10 @@
 
 This repository contains a CLI tool for interacting with Firefox's session data which stores information about the browser's currently open windows and tabs.
 
-There is also a GUI that provides some of the functionality that the CLI exposes. You can find it at <https://github.com/Lej77/firefox-session-ui>.
+There is a couple of GUI applications that provides some of the functionality that the CLI exposes. You can find them at:
+
+- <https://github.com/Lej77/firefox-session-ui> ([Web demo](https://lej77.github.io/firefox-session-ui/)) (Build with web technology using the [`Dioxus`](https://crates.io/crates/dioxus) and [`Tauri`](https://crates.io/crates/tauri) frameworks)
+- <https://github.com/Lej77/firefox-session-ui-gtk4> (Build using the [`GTK4`](https://crates.io/crates/gtk4) UI framework)
 
 ## Platform support
 
