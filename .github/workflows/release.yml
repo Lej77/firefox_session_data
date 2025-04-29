@@ -30,15 +30,15 @@ jobs:
 
           - platform: 'ubuntu-22.04'
             target: 'wasm32-wasip1'
-            ext: 'wasm'
+            ext: '.wasm'
 
           - platform: 'ubuntu-22.04'
             target: 'wasm32-wasip2'
-            ext: 'wasm'
+            ext: '.wasm'
 
           - platform: 'windows-latest'
             target: 'x86_64-pc-windows-msvc'
-            ext: 'exe'
+            ext: '.exe'
 
     runs-on: ${{ matrix.platform }}
     steps:
