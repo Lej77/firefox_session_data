@@ -12,7 +12,7 @@ There is a couple of GUI applications that provides some of the functionality th
 
 Currently only Windows and WebAssembly are supported, but it should be easy to port to other platforms and might already compile without issues.
 
-The optional HTML to PDF converters are probably involve a bit of work in order to allow them to compile on all platforms, the code can be found at [Lej77/html_to_pdf: Rust code for different HTML to PDF conversion methods](https://github.com/Lej77/html_to_pdf).
+The optional HTML to PDF converters would probably require quite a bit of work in order to allow them to compile on all platforms, the code can be found at [Lej77/html_to_pdf: Rust code for different HTML to PDF conversion methods](https://github.com/Lej77/html_to_pdf). These aren't enabled by default though so they can be left alone for now.
 
 Otherwise it should mostly be code related to finding where Firefox stores its profile folders on each platform.
 
