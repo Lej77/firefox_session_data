@@ -4,8 +4,9 @@ This repository contains a CLI tool for interacting with Firefox's session data 
 
 There is a couple of GUI applications that provides some of the functionality that the CLI exposes. You can find them at:
 
-- <https://github.com/Lej77/firefox-session-ui> ([Web demo](https://lej77.github.io/firefox-session-ui/)) (Build with web technology using the [`Dioxus`](https://crates.io/crates/dioxus) and [`Tauri`](https://crates.io/crates/tauri) frameworks)
-- <https://github.com/Lej77/firefox-session-ui-gtk4> (Build using the [`GTK4`](https://crates.io/crates/gtk4) UI framework)
+- <https://github.com/Lej77/firefox-session-ui> ([Web demo](https://lej77.github.io/firefox-session-ui/)) (Built with web technology using the [`Dioxus`](https://crates.io/crates/dioxus) and [`Tauri`](https://crates.io/crates/tauri) frameworks)
+- <https://github.com/Lej77/firefox-session-ui-gtk4> (Built using the [`GTK4`](https://crates.io/crates/gtk4) UI library)
+- <https://github.com/Lej77/firefox-session-ui-iced> (Built using the [`iced`](https://crates.io/crates/iced) UI library)
 
 ## Platform support
 
