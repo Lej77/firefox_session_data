@@ -2,6 +2,8 @@
 
 This repository contains a CLI tool for interacting with Firefox's session data which stores information about the browser's currently open windows and tabs.
 
+There is also a GUI that provides some of the functionality that the CLI exposes. You can find it at <https://github.com/Lej77/firefox-session-ui>.
+
 ## Platform support
 
 Currently only Windows and WebAssembly are supported, but it should be easy to port to other platforms and might already compile without issues.
