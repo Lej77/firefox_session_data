@@ -74,8 +74,8 @@ jobs:
         run: |
           rm firefox-session-data-${{ matrix.target }}${{ matrix.ext }}
 
-      - name: Display structure of uploads folder
-        run: ls uploads -R
+      - name: Post Build | Display structure of uploads folder
+        run: ls uploads
 
       - name: Post Build | Upload binary
         uses: actions/upload-artifact@v4
@@ -98,7 +98,7 @@ jobs:
           merge-multiple: true
 
       - name: Display structure of downloaded files
-        run: ls -R
+        run: ls artifacts
 
       # Upload release asset:  https://github.com/actions/upload-release-asset
       # which recommends:      https://github.com/softprops/action-gh-release
