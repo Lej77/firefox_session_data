@@ -20,6 +20,7 @@ There is a couple of GUI applications that provides some of the functionality th
 - <https://github.com/Lej77/firefox-session-ui> ([Web demo](https://lej77.github.io/firefox-session-ui/)) (Built with web technology using the [`Dioxus`](https://crates.io/crates/dioxus) and [`Tauri`](https://crates.io/crates/tauri) frameworks)
 - <https://github.com/Lej77/firefox-session-ui-gtk4> (Built using the [`GTK4`](https://crates.io/crates/gtk4) UI library)
 - <https://github.com/Lej77/firefox-session-ui-iced> ([Bugged web demo](https://lej77.github.io/firefox-session-ui-iced/)) (Built using the [`iced`](https://crates.io/crates/iced) UI library)
+- <https://github.com/Lej77/firefox-session-ui-egui> (Built using the [`egui`](https://crates.io/crates/egui) UI library)
 
 ## Platform support
 
