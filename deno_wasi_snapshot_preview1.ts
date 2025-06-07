@@ -1032,7 +1032,7 @@ export default class Context {
               break;
 
             case entries[i].isDirectory:
-              type = FILETYPE_REGULAR_FILE;
+              type = FILETYPE_DIRECTORY;
               break;
 
             case entries[i].isSymlink:

@@ -1,4 +1,4 @@
-import * as wasi from 'npm:@bytecodealliance/preview2-shim@^0.17.1'
+import * as wasi from 'npm:@bytecodealliance/preview2-shim@^0.17.2'
 
 if (Deno.args.length === 0) {
     console.error(`First argument must be the path to the WebAssembly module`);

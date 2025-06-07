@@ -71,9 +71,7 @@ wasmtime -S inherit-env=y --dir "%AppData%\Mozilla\Firefox\Profiles" ./target/wa
 
 
 REM We can also run the WebAssembly module using Deno v2:
-deno run --allow-env --allow-read deno_wasi_snapshot_preview1.runner.ts  ./target/wasm32-wasip1/release/firefox-session-data.wasm tabs-to-links --compressed --stdin --stdout --format=text >.temp.txt <%AppData%/Mozilla/Firefox/Profiles/XXXXXXXX.default-release/sessionstore-backups/recovery.jsonlz4
-REM Note: XXXXXXXX is some unique prefix generated for your Firefox profile.
-REM Note: seems like detecting if a directory entry is a file or folder is broken in deno_wasi_snapshot_preview1.ts so we can't let the CLI find paths
+deno run --allow-env --allow-read deno_wasi_snapshot_preview1.runner.ts ./target/wasm32-wasip1/release/firefox-session-data.wasm tabs-to-links tabs-to-links --firefox-profile=default-release --stdout --format=text >.temp.txt
 ```
 
 ## License
