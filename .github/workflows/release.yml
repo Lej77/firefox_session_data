@@ -78,8 +78,8 @@ jobs:
           WASM_INPUT="firefox-session-data-${{ matrix.target }}${{ matrix.ext }}"
           JSON_OUTPUT="firefox-session-data-${{ matrix.target }}.json"
           {
-            echo -n '{"version": "' 
-            git describe --tags | sed 's/^v//'
+            echo -n '{"version": "'
+            echo -n $(git describe --tags | sed 's/^v//')
             echo -n '", "wasmGzippedBase64": "'
             gzip --stdout --rsyncable "$WASM_INPUT" | base64
             echo '"}'
