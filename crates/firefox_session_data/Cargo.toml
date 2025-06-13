@@ -4,9 +4,11 @@ version.workspace = true
 authors.workspace = true
 edition.workspace = true
 license = "MIT OR Apache-2.0" # But complete program might need to be licensed under AGPL if all features are enabled.
+repository.workspace = true
 description = """
 Tool for interacting with Firefox "sessionstore" data which contains info about all currently open Firefox windows (and recently closed ones).
 """
+
 
 [features]
 default = [
