@@ -922,7 +922,7 @@ dependencies = [
 
 [[package]]
 name = "firefox_compression"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "byteorder 1.5.0",
  "compress",
@@ -934,7 +934,7 @@ dependencies = [
 
 [[package]]
 name = "firefox_session_data"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "chrono",
  "clap",
@@ -968,7 +968,7 @@ dependencies = [
 
 [[package]]
 name = "firefox_session_store"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "either",
  "serde",
@@ -1857,7 +1857,7 @@ dependencies = [
 
 [[package]]
 name = "json_statistics"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "either",
  "num-format",
