@@ -54,28 +54,28 @@ jobs:
       - name: Build release binary
         run: cargo build --release --target ${{ matrix.target }}
 
-      - name: Post Build | Move and rename binary
+      - name: Post Build | Move binary
         run: |
           mkdir uploads
-          mv target/${{ matrix.target }}/release/firefox-session-data${{ matrix.ext }} uploads/firefox-session-data-${{ matrix.target }}${{ matrix.ext }}
+          mv target/${{ matrix.target }}/release/firefox-session-data${{ matrix.ext }} uploads/firefox-session-data${{ matrix.ext }}
 
       - name: Post Build | Prepare artifacts [zip]
         if: matrix.platform == 'windows-latest'
         working-directory: uploads
         run: |
-          7z a firefox-session-data-${{ matrix.target }}.zip firefox-session-data-${{ matrix.target }}${{ matrix.ext }}
+          7z a firefox-session-data-${{ matrix.target }}.zip firefox-session-data${{ matrix.ext }}
 
       - name: Post Build | Prepare artifacts [tar.gz]
         if: matrix.platform != 'windows-latest'
         working-directory: uploads
         run: |
-          tar --create --gzip --verbose --file  firefox-session-data-${{ matrix.target }}.tar.gz firefox-session-data-${{ matrix.target }}${{ matrix.ext }}
+          tar --create --gzip --verbose --file  firefox-session-data-${{ matrix.target }}.tar.gz firefox-session-data${{ matrix.ext }}
 
       - name: Post Build | WebAssembly as JSON (for easier Deno usage)
         if: matrix.target == 'wasm32-wasip1'
         working-directory: uploads
         run: |
-          WASM_INPUT="firefox-session-data-${{ matrix.target }}${{ matrix.ext }}"
+          WASM_INPUT="firefox-session-data${{ matrix.ext }}"
           JSON_OUTPUT="firefox-session-data-${{ matrix.target }}.json"
           {
             echo -n '{"version": "'
@@ -91,7 +91,7 @@ jobs:
       - name: Post Build | Remove binary (now inside compressed artifact)
         working-directory: uploads
         run: |
-          rm firefox-session-data-${{ matrix.target }}${{ matrix.ext }}
+          rm firefox-session-data${{ matrix.ext }}
 
       - name: Post Build | Display structure of uploads folder
         run: ls uploads
