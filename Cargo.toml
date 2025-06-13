@@ -3,10 +3,10 @@ resolver = "2"
 members = ["crates/*"]
 
 [workspace.package]
-version = "0.1.0"
+version = "0.1.0" # Also update version in "src-deno/wasi-snapshot-preview1.runner.ts" and in Readme commands
 authors = ["Lej77 <31554212+Lej77@users.noreply.github.com>"]
 edition = "2021"
-
+repository = "https://github.com/Lej77/firefox_session_data/"
 
 # See: https://github.com/yaahc/color-eyre#improving-perf-on-debug-builds
 [profile.dev.package.backtrace]

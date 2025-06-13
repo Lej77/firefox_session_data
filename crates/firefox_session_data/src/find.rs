@@ -317,7 +317,7 @@ pub fn resolve_to_unused_path(
     let mut path_str = if let Some(mut path) = path {
         if path.is_empty() {
             path = default_name.into_owned();
-        } else if path.ends_with(|c| c == '\\' || c == '/') {
+        } else if path.ends_with(['\\', '/']) {
             path.push_str(default_name.as_ref());
         }
         path

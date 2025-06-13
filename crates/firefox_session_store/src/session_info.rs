@@ -13,12 +13,14 @@ use std::iter;
 pub struct TabGroup<'a> {
     name: Cow<'a, str>,
     tabs: Vec<TabInfo<'a>>,
+    is_closed: bool,
 }
 impl<'a> TabGroup<'a> {
-    pub fn new(name: impl Into<Cow<'a, str>>, tabs: Vec<TabInfo<'a>>) -> Self {
+    pub fn new(name: impl Into<Cow<'a, str>>, tabs: Vec<TabInfo<'a>>, is_closed: bool) -> Self {
         Self {
             name: name.into(),
             tabs,
+            is_closed,
         }
     }
     pub fn name(&self) -> &str {
@@ -26,6 +28,9 @@ impl<'a> TabGroup<'a> {
     }
     pub fn tabs(&self) -> &[TabInfo<'a>] {
         &self.tabs
+    }
+    pub fn is_closed(&self) -> bool {
+        self.is_closed
     }
 }
 
@@ -46,14 +51,16 @@ pub fn get_groups_from_session(
         .iter()
         .filter(move |_| include_open_windows)
         .enumerate()
-        .map(|(index, window)| WindowInfo::new(window).as_group(format!("Window {}", index + 1)));
+        .map(|(index, window)| {
+            WindowInfo::new(window, false).as_group(format!("Window {}", index + 1))
+        });
     let closed_windows = session_data
         ._closed_windows
         .iter()
         .filter(move |_| include_closed_windows)
         .enumerate()
         .map(|(index, window)| {
-            WindowInfo::new(window).as_group(format!("Closed window {}", index + 1))
+            WindowInfo::new(window, true).as_group(format!("Closed window {}", index + 1))
         });
 
     if sort_names {
@@ -70,10 +77,11 @@ pub fn get_groups_from_session(
 #[derive(Clone, Copy, Debug)]
 pub struct WindowInfo<'a> {
     pub data: &'a session_store::FirefoxWindow,
+    pub is_closed: bool,
 }
 impl<'a> WindowInfo<'a> {
-    pub fn new(data: &'a session_store::FirefoxWindow) -> Self {
-        Self { data }
+    pub fn new(data: &'a session_store::FirefoxWindow, is_closed: bool) -> Self {
+        Self { data, is_closed }
     }
     /// The name of the window. This can be provided via some extensions.
     pub fn name(&self) -> Option<Cow<'a, str>> {
@@ -107,6 +115,7 @@ impl<'a> WindowInfo<'a> {
         TabGroup::new(
             self.name().unwrap_or_else(|| default_name.into()),
             self.tabs_iter().collect(),
+            self.is_closed,
         )
     }
 

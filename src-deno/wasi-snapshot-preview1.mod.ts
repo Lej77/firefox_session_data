@@ -1,4 +1,4 @@
-import Context from './deno_wasi_snapshot_preview1.ts'
+import Context from './wasi-snapshot-preview1.ts'
 
 /** @type {{ [index: string]: string }} */
 let env = {};

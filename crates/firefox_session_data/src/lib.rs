@@ -252,6 +252,21 @@ pub enum Opt {
         session: SessionstoreOpt,
     },
 
+    /// Get a list of tab groups from a sessionstore.
+    #[clap(version, author)]
+    #[clap(visible_alias = "gg")]
+    GetGroups {
+        #[clap(flatten)]
+        session: SessionstoreOpt,
+
+        #[clap(flatten)]
+        tab_group_options: to_links::TabGroupOptions,
+
+        /// Output the information as JSON.
+        #[clap(long)]
+        json: bool,
+    },
+
     /// Get URLs for tabs in a sessionstore file.
     #[clap(version, author)]
     #[clap(visible_alias = "ttl")]
@@ -265,7 +280,11 @@ pub enum Opt {
     /// `tabs-to-links` command.
     #[clap(version, author)]
     #[clap(visible_alias = "ttlf")]
-    TabsToLinksFormats,
+    TabsToLinksFormats {
+        /// Output the information as JSON.
+        #[clap(long)]
+        json: bool,
+    },
 }
 impl Opt {
     pub fn common(&self) -> &CommonOpt {
@@ -277,9 +296,10 @@ impl Opt {
             Opt::RemoveMarkedTabs { session, .. } => &session.in_out_info.common,
             Opt::RemoveTreeData { session, .. } => &session.in_out_info.common,
             Opt::Modify { session, .. } => &session.in_out_info.common,
+            Opt::GetGroups { session, .. } => &session.in_out_info.common,
             Opt::TabsToLinks(opt) => &opt.session_store_opt.in_out_info.common,
             Opt::Domains(opt) => &opt.in_out_info.common,
-            Opt::TabsToLinksFormats => panic!("this command doesn't have any arguments"),
+            Opt::TabsToLinksFormats { .. } => panic!("this command doesn't have any arguments"),
         }
     }
 }
@@ -734,13 +754,45 @@ pub fn run() -> Result<()> {
     let result = try_!({
         let opt = Opt::parse();
 
-        if let Opt::TabsToLinksFormats = opt {
-            write!(
-                io::stdout().lock(),
-                "{}",
-                to_links::ttl_formats::InfoAboutFormats
-            )
-            .context("Failed to write info to stdout.")?;
+        if let Opt::TabsToLinksFormats { json } = opt {
+            if json {
+                #[derive(serde::Serialize)]
+                struct JsonInfo<'a> {
+                    name: &'a str,
+                    alias_for: Option<&'a str>,
+                    is_supported: bool,
+                    description: String,
+                    file_extension: &'a str,
+                }
+                let formats = to_links::ttl_formats::FormatInfo::all()
+                    .iter()
+                    .map(|format| {
+                        let (link_format, as_pdf) = format.as_format().to_link_format();
+                        JsonInfo {
+                            name: format.as_str(),
+                            alias_for: Some(format.follow_alias().as_str())
+                                .filter(|&alias| alias != format.as_str()),
+                            is_supported: format.as_format().is_supported(),
+                            description: format.to_string(),
+                            file_extension: to_links::TabsToLinksOutput {
+                                format: link_format,
+                                as_pdf,
+                                conversion_options: Default::default(),
+                            }
+                            .file_extension(),
+                        }
+                    })
+                    .collect::<Vec<_>>();
+                serde_json::to_writer_pretty(io::stdout().lock(), &formats)
+                    .context("Failed to serialize format info to stdout")?;
+            } else {
+                write!(
+                    io::stdout().lock(),
+                    "{}",
+                    to_links::ttl_formats::InfoAboutFormats
+                )
+                .context("Failed to write info to stdout.")?;
+            }
             return Ok(());
         }
 
@@ -1190,6 +1242,83 @@ pub fn run() -> Result<()> {
 
                 command.in_out_info.handle_output(writer_creator)?;
             }
+            Opt::GetGroups {
+                session: session_store_opt,
+                tab_group_options,
+                json,
+            } => {
+                debug!("Executing: GetGroups command");
+                let reader_creator = session_store_opt.get_reader_creator()?;
+
+                info!(
+                    "Deserializing JSON data from {}",
+                    reader_creator.reader_info()
+                );
+
+                let session =
+                    reader_creator.deserialize_json_data::<session_store::FirefoxSessionStore>()?;
+
+                let groups = session_store::session_info::get_groups_from_session(
+                    &session,
+                    !tab_group_options.only_closed_windows,
+                    tab_group_options.closed_windows || tab_group_options.only_closed_windows,
+                    !tab_group_options.no_sorting,
+                )
+                .collect::<Vec<_>>();
+
+                let writer_creator = session_store_opt
+                    .in_out_info
+                    .get_writer_creator("tab-groups", if json { "json" } else { "txt" })?;
+                {
+                    let mut writer = writer_creator.get_writer()?;
+
+                    if json {
+                        #[derive(serde::Serialize)]
+                        struct JsonGroup<'a> {
+                            name: &'a str,
+                            tab_count: u64,
+                            is_closed: bool,
+                        }
+                        let json_groups = groups
+                            .iter()
+                            .map(|group| JsonGroup {
+                                name: group.name(),
+                                tab_count: u64::try_from(group.tabs().len()).unwrap(),
+                                is_closed: group.is_closed(),
+                            })
+                            .collect::<Vec<_>>();
+                        serde_json::to_writer_pretty(writer, &json_groups).with_context(|| {
+                            format!(
+                                "Failed to serialize tab group info as JSON to {}",
+                                writer_creator
+                            )
+                        })?;
+                    } else {
+                        try_!({
+                            let mut is_closed = false;
+                            for group in groups {
+                                if is_closed != group.is_closed() {
+                                    // Closed windows come after open ones.
+                                    writeln!(writer)?;
+                                    is_closed = true;
+                                }
+                                writeln!(writer, "{}", group.name())?;
+                            }
+                        })
+                        .with_context(|| {
+                            format!(
+                                "Failed to write tab group information to {}.",
+                                writer_creator
+                            )
+                        })?;
+                    }
+                    drop(session);
+                }
+
+                session_store_opt
+                    .in_out_info
+                    .handle_output(writer_creator)?;
+            }
             Opt::TabsToLinks(command) => {
                 debug!("Executing: TabsToLinks command");
                 let options = command.parse_options()?;
@@ -1212,26 +1341,43 @@ pub fn run() -> Result<()> {
                 let writer_info = writer_creator.output_info().to_string();
 
                 info!("Writing links to {}", writer_info);
-                tabs_to_links(
-                    &session_store::session_info::get_groups_from_session(
-                        &session,
-                        true,
-                        command.closed_windows,
-                        !command.no_sorting,
-                    )
-                    .collect::<Vec<_>>(),
-                    options,
-                    &mut writer_creator,
-                )
-                .with_context(|| format!("Failed to write links to {}.", writer_info))?;
+
+                // Select windows/groups:
+                let groups = session_store::session_info::get_groups_from_session(
+                    &session,
+                    !command.tab_group_options.only_closed_windows,
+                    command.tab_group_options.closed_windows
+                        || command.tab_group_options.only_closed_windows,
+                    !command.tab_group_options.no_sorting,
+                );
+                let groups = if !command.tab_group_indexes.is_empty()
+                    || !command.tab_group_names.is_empty()
+                {
+                    groups
+                        .enumerate()
+                        .filter(|(index, group)| {
+                            command.tab_group_indexes.contains(&(*index as u64))
+                                || command
+                                    .tab_group_names
+                                    .iter()
+                                    .any(|name| name == group.name())
+                        })
+                        .map(|(_, group)| group)
+                        .collect::<Vec<_>>()
+                } else {
+                    groups.collect::<Vec<_>>()
+                };
+
+                tabs_to_links(&groups, options, &mut writer_creator)
+                    .with_context(|| format!("Failed to write links to {}.", writer_info))?;
                 drop(session);
 
                 session_store_opt
                     .in_out_info
                     .handle_output(writer_creator)?;
             }
-            Opt::TabsToLinksFormats => {
-                unreachable!("We handle this earlier");
+            Opt::TabsToLinksFormats { .. } => {
+                unreachable!("We handled this earlier");
             }
         }
 

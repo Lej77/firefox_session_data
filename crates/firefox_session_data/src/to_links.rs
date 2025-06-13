@@ -29,6 +29,9 @@ pub mod ttl_formats {
                 $(,$extra_arg:expr)*
                 $(,)?
             )])?
+            $([supported(
+                $supported:expr
+            )])?
             $name:ident = $value:expr
             $( => $alias:ident $($_alias:ident)?)?
         ),* $(,)? ) => {
@@ -76,6 +79,13 @@ pub mod ttl_formats {
                     match self {$(
                         $(#[cfg(any())] $($_alias)? )?
                         Format::$name => FormatInfo::$name,
+                    )*}
+                }
+
+                pub fn is_supported(self) -> bool {
+                    match self {$(
+                        $(#[cfg(any())] $($_alias)? )?
+                        Format::$name => true $(&& $supported)?,
                     )*}
                 }
             }
@@ -265,6 +275,7 @@ pub mod ttl_formats {
             "{}",
             if cfg!(not(feature = "typst_pdf")) {" [Note: Typst was not included when this version of the program was compiled and so this format will fail.]"} else {""},
         )]
+        [supported(cfg!(feature = "typst_pdf"))]
         PDF_TYPST = "pdf-typst",
 
         /// A C# HTML to PDF converter using its more modern implementation.
@@ -272,18 +283,22 @@ pub mod ttl_formats {
         /// - Most accurate of the C# program's converters (for example some
         ///   japanese characters are only correctly shown with this option).
         /// - No PDF Table of Contents.
+        [supported(cfg!(all(feature = "to_pdf_dotnet_itext", not(target_family = "wasm"))))]
         PDF_MODERN = "pdf-modern",
         /// A C# HTML to PDF converter using its older legacy implementation.
         /// - Links will not be colored blue but they can still be clicked.
         /// - No PDF Table of Contents.
+        [supported(cfg!(all(feature = "to_pdf_dotnet_framework_itext", not(target_family = "wasm"))))]
         PDF_LEGACY = "pdf-legacy",
         /// A C# HTML to PDF converter using its older XML implementation in its
         /// simpler mode.
         /// - Supports PDF Table of Contents for easier navigation.
+        [supported(cfg!(all(feature = "to_pdf_dotnet_framework_itext", not(target_family = "wasm"))))]
         PDF_XML_SIMPLE = "pdf-xml-simple",
         /// A C# HTML to PDF converter using its older XML implementation in
         /// advanced mode. This uses simpler default CSS.
         /// - Supports PDF Table of Contents for easier navigation.
+        [supported(cfg!(all(feature = "to_pdf_dotnet_framework_itext", not(target_family = "wasm"))))]
         PDF_XML_ADV = "pdf-xml-adv",
 
         /// Use the "wkhtmltopdf" project to convert HTML to PDF. This uses the
@@ -307,6 +322,7 @@ pub mod ttl_formats {
             " [Note: in this version of the program the files are {}included]",
             if cfg!(feature = "wk_html_to_pdf_include_dll") {""} else {"NOT "},
         )]
+        [supported(cfg!(all(feature = "wk_html_to_pdf", not(target_family = "wasm"))))]
         PDF_WK_HTML_LINKED = "pdf-wk-html-linked",
         // Uses QT Webkit to render HTML for PDF generation. "wkhtmltopdf.exe"
         // must be in PATH or Current Directory if it isn't included in this binary.
@@ -315,6 +331,7 @@ pub mod ttl_formats {
         /// Use the Rust library "chromiumoxide" to control a headless Chrome
         /// browser with the DevTools Protocol in order to load HTML and "print"
         /// a PDF. Requires that Chrome is installed.
+        [supported(cfg!(all(feature = "chromiumoxide_conversion", not(target_family = "wasm"))))]
         PDF_CHROMIUM_OXIDE = "pdf-chromium-oxide",
     }
 }
@@ -397,6 +414,23 @@ impl ttl_formats::Format {
 
 #[derive(Debug, Parser, Clone)]
 #[clap(rename_all = "kebab-case")]
+pub struct TabGroupOptions {
+    #[clap(long, visible_alias = "no_sort")]
+    /// Don't sort windows or tab groups after their names.
+    pub no_sorting: bool,
+
+    #[clap(long, requires = "closed-windows")]
+    /// Only include info from recently closed windows and ignore all open
+    /// windows.
+    pub only_closed_windows: bool,
+
+    #[clap(long)]
+    /// Include info from recently closed windows as well as open windows.
+    pub closed_windows: bool,
+}
+
+#[derive(Debug, Parser, Clone)]
+#[clap(rename_all = "kebab-case")]
 pub struct TabsToLinksOpt {
     #[clap(flatten)]
     pub session_store_opt: SessionstoreOpt,
@@ -419,19 +453,23 @@ pub struct TabsToLinksOpt {
     /// where a new link starts.
     pub indent_all_links: bool,
 
-    #[clap(long, visible_alias = "no_sort")]
-    /// Don't sort window sections after their names.
-    pub no_sorting: bool,
+    #[clap(flatten)]
+    pub tab_group_options: TabGroupOptions,
 
-    #[clap(long)]
-    /// Generate links for tabs in recently closed windows as well.
-    pub closed_windows: bool,
+    #[clap(long, visible_alias = "tgi", value_delimiter = ',')]
+    /// Only generate links for the tab groups specified by these indexes.
+    /// Multiple indexes can be specified by separating them with commas (,).
+    pub tab_group_indexes: Vec<u64>,
+
+    #[clap(long, visible_alias = "tgi")]
+    /// Only generate links for the tab groups specified by these names.
+    pub tab_group_names: Vec<String>,
 
     #[clap(
         long,
         value_enum,
         action = clap::ArgAction::Append,
-        use_value_delimiter = true,
+        value_delimiter = ',',
     )]
     /// Visualize tab trees from addons like Tree Style Tab.
     ///

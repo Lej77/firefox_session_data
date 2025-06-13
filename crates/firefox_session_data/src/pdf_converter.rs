@@ -1,5 +1,5 @@
 //! Provides PDF conversions from other formats (currently HTML or Typst documents).
-#![cfg_attr(target_family = "wasm", expect(unused_imports, unused_variables))]
+#![cfg_attr(target_family = "wasm", expect(unused_variables))]
 
 use crate::Result;
 use eyre::bail;

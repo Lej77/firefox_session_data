@@ -43,6 +43,8 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-tags: true
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -68,6 +70,14 @@ jobs:
         working-directory: uploads
         run: |
           tar --create --gzip --verbose --file  firefox-session-data-${{ matrix.target }}.tar.gz firefox-session-data-${{ matrix.target }}${{ matrix.ext }}
+
+      - name: Post Build | WebAssembly as JSON (for easier Deno usage)
+        if: matrix.target == 'wasm32-wasip1'
+        working-directory: uploads
+        run: |
+          WASM_INPUT="firefox-session-data-${{ matrix.target }}${{ matrix.ext }}"
+          JSON_OUTPUT="firefox-session-data-${{ matrix.target }}.json"
+          echo "{\"version\": \"$(git describe --tags | sed 's/^v//')\", \"wasmGzippedBase64\": \"$(gzip -c \"$WASM_INPUT\" | base64)\"}" > "$JSON_OUTPUT"
 
       - name: Post Build | Remove binary (now inside compressed artifact)
         working-directory: uploads
