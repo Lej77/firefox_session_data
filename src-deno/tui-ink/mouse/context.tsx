@@ -63,7 +63,7 @@ export interface Mouse {
 export function MouseProvider(props: React.PropsWithChildren) {
   const context = React.useContext(MouseContext);
   const mouse = useMemo<Mouse>(() => ({
-    events: new EventEmitter<MouseEventMap>().setMaxListeners(0), // We expect more than 10 buttons or similar to listen on mouse events.
+    events: new EventEmitter<MouseEventMap>().setMaxListeners(100_000).setMaxListeners(0), // We expect more than 10 buttons or similar to listen on mouse events.
     position: { x: 0, y: 0 },
   }), []);
   useEffect(() => {
