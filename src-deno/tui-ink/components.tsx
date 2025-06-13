@@ -408,7 +408,9 @@ export function TextField(props: TextFieldProps) {
       overflow="hidden"
       borderColor={isFocused ? "blue" : undefined}
     >
-      <TextInput {...fixedProps} focus={isFocused} />
+      <Box minWidth={100_000}>
+        <TextInput {...fixedProps} focus={isFocused} />
+      </Box>
     </Box>
   );
 }
