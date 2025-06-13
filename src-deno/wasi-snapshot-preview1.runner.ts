@@ -9,7 +9,7 @@ export const VERSION = "0.1.1";
 export const GITHUB_RELEASE_COMPRESSED_WASM =
     `https://github.com/Lej77/firefox_session_data/releases/download/v${VERSION}/firefox-session-data-wasm32-wasip1.tar.gz`;
 export const GITHUB_RELEASE_JSON_WITH_WASM =
-    `https://github.com/Lej77/firefox_session_data/releases/download/v${VERSION}/firefox-session-data-wasm32-wasip1.json`;
+    `https://github.com/Lej77/firefox_session_data/releases/download/v${VERSION}/firefox-session-data-wasm32-wasip1.js`;
 
 /** Get the path of the firefox profile directory which will contain a different
  * directory for each Firefox profile. */
@@ -107,13 +107,11 @@ export async function importWasmBlob(
 ) {
     const { decodeBase64 } = await import("jsr:@std/encoding@^1.0.0/base64");
 
-    const json = (await import(url, {
-        with: { type: "json" },
-    })).default;
+    const json = (await import(url)).default;
 
     if (!json || typeof json !== "object") {
         throw new Error(
-            `Expected json to contain an object but found ${typeof json}`,
+            `Expected module's default export to be an object but found ${typeof json}`,
         );
     }
     if (!("wasmGzippedBase64" in json)) {
@@ -146,12 +144,12 @@ export async function getWasm(from: string): Promise<Uint8Array> {
         } else if (from === "IMPORT") {
             return await importWasmBlob();
         } else if (from.toLowerCase().startsWith("http")) {
-            if (from.toLowerCase().endsWith(".json")) {
+            if (from.toLowerCase().endsWith(".js")) {
                 return await importWasmBlob(from);
             } else {
                 return await fetchWasmBlob(from);
             }
-        } else if (from.toLowerCase().endsWith(".json")) {
+        } else if (from.toLowerCase().endsWith(".js")) {
             // Assume JSON with gzipped base64 data:
             const path = await import("jsr:@std/path@^1.1.0");
 

@@ -71,14 +71,14 @@ jobs:
         run: |
           tar --create --gzip --verbose --file  firefox-session-data-${{ matrix.target }}.tar.gz firefox-session-data${{ matrix.ext }}
 
-      - name: Post Build | WebAssembly as JSON (for easier Deno usage)
+      - name: Post Build | WebAssembly as JavaScript export (for easier Deno usage)
         if: matrix.target == 'wasm32-wasip1'
         working-directory: uploads
         run: |
           WASM_INPUT="firefox-session-data${{ matrix.ext }}"
-          JSON_OUTPUT="firefox-session-data-${{ matrix.target }}.json"
+          JSON_OUTPUT="firefox-session-data-${{ matrix.target }}.js"
           {
-            echo -n '{"version": "'
+            echo -n 'export default {"version": "'
             echo -n $(git describe --tags | sed 's/^v//')
             echo -n '", "wasmGzippedBase64": "'
             gzip --stdout --rsyncable "$WASM_INPUT" | base64 --wrap=0
@@ -86,7 +86,7 @@ jobs:
           } > "$JSON_OUTPUT"
       # VERSION=$(git describe --tags | sed 's/^v//')
       # WASM_B64=$(gzip --stdout --rsyncable "$WASM_INPUT" | base64 --wrap=0)
-      # echo "{\"version\": \"$VERSION\", \"wasmGzippedBase64\": \"$WASM_B64\"}" > "$JSON_OUTPUT"
+      # echo "export default {\"version\": \"$VERSION\", \"wasmGzippedBase64\": \"$WASM_B64\"}" > "$JSON_OUTPUT"
 
       - name: Post Build | Remove binary (now inside compressed artifact)
         working-directory: uploads
