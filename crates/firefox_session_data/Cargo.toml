@@ -162,3 +162,6 @@ html_to_pdf_adapter_chromiumoxide = { optional = true, git = "https://github.com
 name = "firefox-session-data" # Names of CLI tools use kebab-case by convention.
 path = "src/main.rs"
 required-features = []
+
+[package.metadata.binstall]
+name = "firefox-session-data" # We use dashes in the name of the release artifacts.
