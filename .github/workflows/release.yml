@@ -81,11 +81,11 @@ jobs:
             echo -n '{"version": "'
             echo -n $(git describe --tags | sed 's/^v//')
             echo -n '", "wasmGzippedBase64": "'
-            gzip --stdout --rsyncable "$WASM_INPUT" | base64
+            gzip --stdout --rsyncable "$WASM_INPUT" | base64 --wrap=0
             echo '"}'
           } > "$JSON_OUTPUT"
       # VERSION=$(git describe --tags | sed 's/^v//')
-      # WASM_B64=$(gzip --stdout --rsyncable "$WASM_INPUT" | base64)
+      # WASM_B64=$(gzip --stdout --rsyncable "$WASM_INPUT" | base64 --wrap=0)
       # echo "{\"version\": \"$VERSION\", \"wasmGzippedBase64\": \"$WASM_B64\"}" > "$JSON_OUTPUT"
 
       - name: Post Build | Remove binary (now inside compressed artifact)
