@@ -19,6 +19,7 @@
 
 import "./tui-ink/eager-permissions.ts";
 import { ink, path_extname, React } from "./tui-ink/deps.ts";
+import { EventEmitter } from "node:events";
 import {
   BoundToTerminalSize,
   ConsoleSizeProvider,
@@ -834,7 +835,9 @@ export function App(props: AppProps) {
                   onOpenWizard={() => setWizardOpen(true)}
                   onLoadInput={onLoadInput}
                 />
-                <Box flexShrink={0}><Text>Tabs as links:</Text></Box>
+                <Box flexShrink={0}>
+                  <Text>Tabs as links:</Text>
+                </Box>
                 <TextArea
                   outerBoxProps={{ flexGrow: 1 }}
                   value={previewText}
@@ -921,6 +924,10 @@ export async function main(wasmSource?: string, multiThreaded: boolean = true) {
   patchStdinObject();
   patchStdoutObject();
   switchToSecondaryTerminalBuffer();
+
+  // Disable EventEmitter warnings: https://docs.deno.com/api/node/events/~/EventEmitter.defaultMaxListeners
+  EventEmitter.defaultMaxListeners = 0;
+
   render(
     <App runCommand={runCommand} outputFormats={outputFormats} />,
     { exitOnCtrlC: false },
