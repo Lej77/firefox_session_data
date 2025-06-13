@@ -104,7 +104,7 @@ The WebAssembly file should now be at `./target/wasm32-wasip1/release/firefox-se
 After we have compiled or downloaded the `wasm` file we can run it using the `wasmtime` runtime:
 
 ```cmd
-wasmtime ./target/wasm32-wasip1/release/firefox-session-data.wasm tabs-to-links --compressed --stdin --stdout --format=text >.temp.txt <"%AppData%/Mozilla/Firefox/Profiles/XXXXXXXX.default-release/sessionstore-backups/recovery.jsonlz4"
+wasmtime "./target/wasm32-wasip1/release/firefox-session-data.wasm" tabs-to-links --compressed --stdin --stdout --format=text >.temp.txt <"%AppData%/Mozilla/Firefox/Profiles/XXXXXXXX.default-release/sessionstore-backups/recovery.jsonlz4"
 ```
 
 Note: `XXXXXXXX` in the command is some unique prefix generated for your Firefox profile.
@@ -112,7 +112,7 @@ Note: `XXXXXXXX` in the command is some unique prefix generated for your Firefox
 If we "preopen" the Firefox profile folder we can let the program itself find the input file's exact path:
 
 ```bash
-wasmtime -S inherit-env=y --dir "%AppData%\Mozilla\Firefox\Profiles" "./target/wasm32-wasip1/release/firefox-session-data.wasm tabs-to-links" --firefox-profile=default-release --stdout --format=text >.temp.txt
+wasmtime -S inherit-env=y --dir "%AppData%\Mozilla\Firefox\Profiles" "./target/wasm32-wasip1/release/firefox-session-data.wasm" tabs-to-links --firefox-profile=default-release --stdout --format=text >.temp.txt
 ```
 
 #### Execute WebAssembly using `deno`
@@ -120,13 +120,13 @@ wasmtime -S inherit-env=y --dir "%AppData%\Mozilla\Firefox\Profiles" "./target/w
 After we have compiled or downloaded the `wasm` file we can run it using the Deno v2 runtime:
 
 ```bash
-deno run --allow-env --allow-read ./src-deno/wasi-snapshot-preview1.runner.ts ./target/wasm32-wasip1/release/firefox-session-data.wasm tabs-to-links tabs-to-links --firefox-profile=default-release --stdout --format=text >.temp.txt
+deno run --allow-env --allow-read ./src-deno/wasi-snapshot-preview1.runner.ts ./target/wasm32-wasip1/release/firefox-session-data.wasm tabs-to-links --firefox-profile=default-release --stdout --format=text >.temp.txt
 ```
 
 The `wasi-snapshot-preview1.runner.ts` script supports downloading the `wasm` file from a GitHub release, so we can run the program without having to manually download _anything_:
 
 ```bash
-deno run --allow-env --allow-read --allow-import=github.com,release-assets.githubusercontent.com "https://raw.githubusercontent.com/Lej77/firefox_session_data/refs/tags/v0.1.1/src-deno/wasi-snapshot-preview1.runner.ts" IMPORT tabs-to-links tabs-to-links --firefox-profile=default-release --stdout --format=text >.temp.txt
+deno run --allow-env --allow-read --allow-import=raw.githubusercontent.com:443,jsr.io:443,objects.githubusercontent.com:443,github.com:443,release-assets.githubusercontent.com:443 "https://raw.githubusercontent.com/Lej77/firefox_session_data/refs/tags/v0.1.1/src-deno/wasi-snapshot-preview1.runner.ts" IMPORT tabs-to-links --firefox-profile=default-release --stdout --format=text >.temp.txt
 ```
 
 ## License
