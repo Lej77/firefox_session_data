@@ -45,7 +45,7 @@ This repository also contains a [TUI](https://en.wikipedia.org/wiki/Text-based_u
 The TUI program can be executed without manually downloading anything by running the following command (provided that Deno has already been installed):
 
 ```bash
-deno run --allow-env --allow-import=github.com,release-assets.githubusercontent.com "https://raw.githubusercontent.com/Lej77/firefox_session_data/refs/tags/v0.1.1/src-deno/tui-ink.tsx" IMPORT
+deno run --allow-env --allow-import=jsr.io:443,raw.githubusercontent.com:443,objects.githubusercontent.com:443,github.com:443,release-assets.githubusercontent.com:443 "https://raw.githubusercontent.com/Lej77/firefox_session_data/refs/tags/v0.1.1/src-deno/tui-ink.tsx" IMPORT
 ```
 
 (Instead of `IMPORT` one could specify a local path where the WebAssembly module

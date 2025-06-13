@@ -107,15 +107,21 @@ export async function importWasmBlob(
 ) {
     const { decodeBase64 } = await import("jsr:@std/encoding@^1.0.0/base64");
 
-    const json = await import(url, {
+    const json = (await import(url, {
         with: { type: "json" },
-    });
+    })).default;
 
     if (!json || typeof json !== "object") {
-        throw new Error(`Expected json to contain an object`);
+        throw new Error(
+            `Expected json to contain an object but found ${typeof json}`,
+        );
     }
     if (!("wasmGzippedBase64" in json)) {
-        throw new Error(`Expected json to contain the key "wasmGzippedBase64"`);
+        throw new Error(
+            `Expected json to contain the key "wasmGzippedBase64" but it only contained the keys: ${
+                JSON.stringify(Object.keys(json))
+            }`,
+        );
     }
     if (typeof json.wasmGzippedBase64 !== "string") {
         throw new Error(`Expected "wasmGzippedBase64" key to contain a string`);
@@ -123,13 +129,12 @@ export async function importWasmBlob(
 
     // Base64 decode
     const gzippedWasm = decodeBase64(json.wasmGzippedBase64);
-    // const gzippedWasm = Uint8Array.from(atob(json.wasmGzippedBase64), c => c.charCodeAt(0));
+    //const gzippedWasm = Uint8Array.from(atob(json.wasmGzippedBase64), (c) => c.charCodeAt(0));
 
     // Decompress (gunzip)
-    return await new Response(
-        gzippedWasm.buffer,
-        { headers: { "Content-Encoding": "gzip" } },
-    ).bytes();
+    return new Response(new Response(gzippedWasm.buffer).body!.pipeThrough(
+        new DecompressionStream("gzip"),
+    )).bytes();
 }
 
 /** Gracefully support multiple different ways of specifying where to get the
@@ -146,7 +151,17 @@ export async function getWasm(from: string): Promise<Uint8Array> {
             } else {
                 return await fetchWasmBlob(from);
             }
+        } else if (from.toLowerCase().endsWith(".json")) {
+            // Assume JSON with gzipped base64 data:
+            const path = await import("jsr:@std/path@^1.1.0");
+
+            return await importWasmBlob(
+                path.toFileUrl(
+                    path.resolve(Deno.cwd(), from.replaceAll("\\", "/")),
+                ).toString(),
+            );
         } else {
+            // Assume wasm file
             return await Deno.readFile(Deno.args[0]);
         }
     } catch (cause) {
