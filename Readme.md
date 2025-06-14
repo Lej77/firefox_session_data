@@ -34,6 +34,8 @@ There is a couple of GUI applications that provides some of the functionality th
 
 ### Terminal User Interface
 
+![GIF that shows the TUI program being used.](tui-demo.gif "TUI demo")
+
 This repository also contains a [TUI](https://en.wikipedia.org/wiki/Text-based_user_interface) implemented using the [`ink`](https://github.com/vadimdemedes/ink) library that can be used with the [`deno`](https://deno.com/) JavaScript runtime. Using deno allows the TUI program to be sanboxed so that it only gets access to the exact file paths that it needs and nothing else. Compared to a web site which is also sandboxed the Deno TUI has a couple of advantages but also some disadvantages:
 
 - Pro: It has no access to the internet by default and so can't send your data to a server somewhere.
