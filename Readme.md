@@ -51,7 +51,7 @@ deno run --allow-env --allow-import=jsr.io:443,raw.githubusercontent.com:443,obj
 ```
 
 (Instead of `IMPORT` one could specify a local path where the WebAssembly module
-is located.)
+is located. In that case the `--allow-import` option is no longer necessary and can be skipped.)
 
 ## Usage
 
