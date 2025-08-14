@@ -32,6 +32,9 @@ There is a couple of GUI applications that provides some of the functionality th
 - <https://github.com/Lej77/firefox-session-ui-iced> ([Web demo](https://lej77.github.io/firefox-session-ui-iced/)) (Built using the [`iced`](https://crates.io/crates/iced) UI library)
 - <https://github.com/Lej77/firefox-session-ui-egui> ([Web demo](https://lej77.github.io/firefox-session-ui-egui/)) (Built using the [`egui`](https://crates.io/crates/egui) UI library)
 
+I wrote some thoughts about my experience with the different UI libraries on reddit:\
+<https://www.reddit.com/r/rust/comments/1mkfxwi/comment/n7j11up/>.
+
 ### Terminal User Interface
 
 ![GIF that shows the TUI program being used.](tui-demo.gif "TUI demo")
