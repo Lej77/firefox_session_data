@@ -222,14 +222,20 @@ pub mod simple_rtf {
 }
 
 mod simple_typst {
+    use std::borrow::Cow;
 
-    pub fn typst_escaped_text(text: &str) -> String {
+    pub fn typst_escaped_text(text: &str) -> Cow<'_, str> {
+        if !text.contains(['\\', '"', '\n', '\r', '\t']) {
+            return Cow::Borrowed(text);
+        }
+
         // https://typst.app/docs/reference/foundations/str/
         text.replace('\\', "\\\\")
             .replace('"', "\\\"")
             .replace('\n', "\\n")
             .replace('\r', "\\r")
             .replace('\t', "\\t")
+            .into()
     }
 }
 
@@ -483,7 +489,7 @@ impl ToLinksOptions<'_> {
                     writer!("# {}", group.name());
                 }
                 LinkFormat::Typst => {
-                    writer!("= {}\n", group.name());
+                    writer!("= #\"{}\"\n", typst_escaped_text(group.name()));
                 }
             }
 
@@ -498,12 +504,17 @@ impl ToLinksOptions<'_> {
                     title = "No title";
                 }
 
-                let number_of_tree_style_tab_parents = tab
+                let mut number_of_tree_style_tab_parents = tab
                     .tst_ancestor_tabs(
                         tree_source,
                         tab.window.expect("tab should have an associated window"),
                     )
                     .count();
+                if self.format == LinkFormat::Typst {
+                    // Typst: items not in lists can have greater indentation
+                    // than list items, so always put all links in a list item.
+                    number_of_tree_style_tab_parents += 1;
+                }
 
                 let mut tab_tree_indention = "".to_owned();
 
