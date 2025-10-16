@@ -356,7 +356,7 @@ impl InputReader {
             None
         }
     }
-    pub fn file_stem(&self) -> Option<Cow<str>> {
+    pub fn file_stem(&self) -> Option<Cow<'_, str>> {
         let path = self.path()?;
         let stem = path.file_stem()?;
         Some(stem.to_string_lossy())

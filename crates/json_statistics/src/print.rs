@@ -159,7 +159,7 @@ impl<'a> StatisticsInfoValues<'a> {
         self
     }
 
-    pub fn get_info_value(&self, info_type: ExtraFMTInfo) -> Option<FMTInfoValue> {
+    pub fn get_info_value(&self, info_type: ExtraFMTInfo) -> Option<FMTInfoValue<'_>> {
         use ExtraFMTInfo::*;
         match info_type {
             Name => self

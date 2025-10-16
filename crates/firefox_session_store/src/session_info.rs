@@ -45,7 +45,7 @@ pub fn get_groups_from_session(
     include_open_windows: bool,
     include_closed_windows: bool,
     sort_names: bool,
-) -> impl Iterator<Item = TabGroup> {
+) -> impl Iterator<Item = TabGroup<'_>> {
     let open_windows = session_data
         .windows
         .iter()

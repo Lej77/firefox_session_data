@@ -113,7 +113,7 @@ macro_rules! define_union_struct {
         }
         impl $name {
             /// An array with all types that this value can contain.
-            pub fn all_fields(&self) -> [JSONStatisticsRef; 0 $(+ 1 + define_union_struct!(@zero $field_name))*] {
+            pub fn all_fields(&self) -> [JSONStatisticsRef<'_>; 0 $(+ 1 + define_union_struct!(@zero $field_name))*] {
                 [
                     $(JSONStatisticsRef::from(&self.$field_name)),*
                 ]

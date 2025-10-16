@@ -9,6 +9,9 @@ description = """
 Tool for interacting with Firefox "sessionstore" data which contains info about all currently open Firefox windows (and recently closed ones).
 """
 
+[package.metadata.binstall]
+name = "firefox-session-data" # We use dashes in the name of the release artifacts.
+
 
 [features]
 default = [
@@ -163,5 +166,3 @@ name = "firefox-session-data" # Names of CLI tools use kebab-case by convention.
 path = "src/main.rs"
 required-features = []
 
-[package.metadata.binstall]
-name = "firefox-session-data" # We use dashes in the name of the release artifacts.
