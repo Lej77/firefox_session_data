@@ -4,7 +4,7 @@ import {
 } from "./wasi-snapshot-preview1.ts";
 
 /** Keep in sync with GitHub releases. Should match the version of the most recent git tag. */
-export const VERSION = "0.1.1";
+export const VERSION = "0.1.2";
 
 export const GITHUB_RELEASE_COMPRESSED_WASM =
     `https://github.com/Lej77/firefox_session_data/releases/download/v${VERSION}/firefox-session-data-wasm32-wasip1.tar.gz`;
