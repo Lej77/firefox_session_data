@@ -556,28 +556,39 @@ impl ToLinksOptions<'_> {
                     scroll = format!(" (scroll: {})", scroll);
                 }
 
-                if url.starts_with("about:") {
-                    writer!("{}", tab_tree_indention);
+                if url == "about:newtab" {
+                    // Treat empty new tabs as separators.
+
                     match self.format {
                         LinkFormat::HTML => {
+                            writer!("{}", tab_tree_indention);
                             // writer!("{}", html_horizontal_line());
                         }
                         LinkFormat::RTF { .. } => {
+                            writer!("{}", tab_tree_indention);
                             // writer!("{}", rtf_horizontal_line(self.format.rtf_picture_horizontal_line()));
                         }
                         LinkFormat::TXT => {
+                            writer!("{}", tab_tree_indention);
                             writer!(
                                 "{}{}",
                                 tab_tree_indention_main,
                                 "--------------------------------------------------------------"
                             );
                         }
-                        LinkFormat::Markdown => {}
-                        LinkFormat::Typst => {}
-                    }
-                }
+                        LinkFormat::Markdown => {
+                            writer!("{}", tab_tree_indention);
+                        }
+                        LinkFormat::Typst => {
+                            // Empty space:
+                            // writer!("#h(0cm)");
 
-                if url != "about:newtab" {
+                            // OR horizontal line:
+                            // writer!("{}#v(0.5em - 1pt)#line(length: 100%)", tab_tree_indention_main);
+                            writer!("{}#line(start: (0%, 0.5em - 1pt), length: 100%)", tab_tree_indention_main);
+                        }
+                    }
+                } else {
                     match self.format {
                         LinkFormat::HTML => {
                             writer!(
@@ -628,7 +639,7 @@ impl ToLinksOptions<'_> {
                         }
                     }
                 }
-            }
+            } // end of tab for loop
 
             let skip_page_break =
                 self.skip_page_break_after_last_group && group_index + 1 == groups.len();
