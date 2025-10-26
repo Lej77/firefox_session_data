@@ -6,3 +6,10 @@ runner = "deno run --allow-env --allow-read deno_wasi_snapshot_preview1.runner.t
 [target.wasm32-wasip2]
 # runner = "deno run --allow-env --allow-read deno_wasi_snapshot_preview2.runner.ts"
 runner = "wasmtime run -S preview2=y -S inherit-env=y"
+
+# Statically link to the C standard library so that it doesn't have to be installed separately.
+# https://github.com/rust-lang/rfcs/blob/master/text/1721-crt-static.md
+[target.x86_64-pc-windows-msvc]
+rustflags = ["-Ctarget-feature=+crt-static"]
+[target.i686-pc-windows-msvc]
+rustflags = ["-Ctarget-feature=+crt-static"]
