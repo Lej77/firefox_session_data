@@ -943,7 +943,7 @@ checksum = "52051878f80a721bb68ebfbc930e07b65ba72f2da88968ea5c06fd6ca3d3a127"
 
 [[package]]
 name = "firefox_compression"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "byteorder 1.5.0",
  "compress",
@@ -955,7 +955,7 @@ dependencies = [
 
 [[package]]
 name = "firefox_session_data"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "chrono",
  "clap",
@@ -989,7 +989,7 @@ dependencies = [
 
 [[package]]
 name = "firefox_session_store"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "either",
  "serde",
@@ -1966,7 +1966,7 @@ dependencies = [
 
 [[package]]
 name = "json_statistics"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "either",
  "num-format",

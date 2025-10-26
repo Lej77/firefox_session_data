@@ -51,7 +51,7 @@ This repository also contains a [TUI](https://en.wikipedia.org/wiki/Text-based_u
 The TUI program can be executed without manually downloading anything by running the following command (provided that Deno has already been installed):
 
 ```bash
-deno run --allow-env --allow-import=jsr.io:443,raw.githubusercontent.com:443,objects.githubusercontent.com:443,github.com:443,release-assets.githubusercontent.com:443 "https://raw.githubusercontent.com/Lej77/firefox_session_data/refs/tags/v0.1.2/src-deno/tui-ink.tsx" IMPORT
+deno run --allow-env --allow-import=jsr.io:443,raw.githubusercontent.com:443,objects.githubusercontent.com:443,github.com:443,release-assets.githubusercontent.com:443 "https://raw.githubusercontent.com/Lej77/firefox_session_data/refs/tags/v0.1.3/src-deno/tui-ink.tsx" IMPORT
 ```
 
 (Instead of `IMPORT` one could specify a local path where the WebAssembly module
@@ -132,7 +132,7 @@ deno run --allow-env --allow-read ./src-deno/wasi-snapshot-preview1.runner.ts ./
 The `wasi-snapshot-preview1.runner.ts` script supports downloading the `wasm` file from a GitHub release, so we can run the program without having to manually download _anything_:
 
 ```bash
-deno run --allow-env --allow-read --allow-import=raw.githubusercontent.com:443,jsr.io:443,objects.githubusercontent.com:443,github.com:443,release-assets.githubusercontent.com:443 "https://raw.githubusercontent.com/Lej77/firefox_session_data/refs/tags/v0.1.2/src-deno/wasi-snapshot-preview1.runner.ts" IMPORT tabs-to-links --firefox-profile=default-release --stdout --format=text >.temp.txt
+deno run --allow-env --allow-read --allow-import=raw.githubusercontent.com:443,jsr.io:443,objects.githubusercontent.com:443,github.com:443,release-assets.githubusercontent.com:443 "https://raw.githubusercontent.com/Lej77/firefox_session_data/refs/tags/v0.1.3/src-deno/wasi-snapshot-preview1.runner.ts" IMPORT tabs-to-links --firefox-profile=default-release --stdout --format=text >.temp.txt
 ```
 
 ## License
