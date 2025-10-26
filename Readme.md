@@ -1,4 +1,5 @@
 # Firefox Session Data CLI
+<!-- markdownlint-disable MD013 -->
 
 <!-- Badge style inspired by https://github.com/dnaka91/advent-of-code/blob/de37024ba3b385694e14f79c849370c0f605f054/README.md -->
 
