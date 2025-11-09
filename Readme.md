@@ -29,9 +29,10 @@ The optional HTML to PDF converters would probably require a bit of work in orde
 There is a couple of GUI applications that provides some of the functionality that the CLI exposes:
 
 - <https://github.com/Lej77/firefox-session-ui> ([Web demo](https://lej77.github.io/firefox-session-ui/)) (Built with web technology using the [`Dioxus`](https://crates.io/crates/dioxus) and [`Tauri`](https://crates.io/crates/tauri) frameworks)
+- <https://github.com/Lej77/firefox-session-ui-gpui> (Built using the [`GPUI`](https://crates.io/crates/gpui) UI library)
 - <https://github.com/Lej77/firefox-session-ui-gtk4> (Built using the [`GTK4`](https://crates.io/crates/gtk4) UI library)
-- <https://github.com/Lej77/firefox-session-ui-iced> ([Web demo](https://lej77.github.io/firefox-session-ui-iced/)) (Built using the [`iced`](https://crates.io/crates/iced) UI library)
 - <https://github.com/Lej77/firefox-session-ui-egui> ([Web demo](https://lej77.github.io/firefox-session-ui-egui/)) (Built using the [`egui`](https://crates.io/crates/egui) UI library)
+- <https://github.com/Lej77/firefox-session-ui-iced> ([Web demo](https://lej77.github.io/firefox-session-ui-iced/)) (Built using the [`iced`](https://crates.io/crates/iced) UI library)
 
 I wrote some thoughts about my experience with the different UI libraries on reddit:\
 <https://www.reddit.com/r/rust/comments/1mkfxwi/comment/n7j11up/>.
