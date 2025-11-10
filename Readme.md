@@ -69,6 +69,8 @@ cargo run --release -- --help
 cargo run --release -- tabs-to-links --firefox-profile=default-release --output=./my-links
 ```
 
+### `cargo install`
+
 You can use `cargo install` to easily build from source without manually cloning the repo:
 
 ```bash
@@ -79,6 +81,21 @@ You can use [`cargo-binstall`](https://github.com/cargo-bins/cargo-binstall) to 
 
 ```bash
 cargo binstall --git https://github.com/Lej77/firefox_session_data.git firefox_session_data
+```
+
+After installing you can update the program using [nabijaczleweli/cargo-update: A cargo subcommand for checking and applying updates to installed executables](https://github.com/nabijaczleweli/cargo-update):
+
+```bash
+cargo install-update --git firefox_session_data
+
+# OR update all installed programs:
+cargo install-update --git --all
+```
+
+You can uninstall uisng:
+
+```bash
+ cargo uninstall firefox_session_data
 ```
 
 ### WebAssembly
