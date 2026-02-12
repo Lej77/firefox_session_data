@@ -198,7 +198,7 @@ pub enum Opt {
     /// could look like:
     ///
     /// import type { JsonData } from './sessionstore-type.ts';
-    /// const json: JsonData = JSON.parse(new TextDecoder().decode(await Deno.readAll(Deno.stdin)));
+    /// const json: JsonData = await new Response(Deno.stdin.readable).json();
     /// // Insert some code here, can print using console.error() if needed
     /// console.log(JSON.stringify(json));
     ///
