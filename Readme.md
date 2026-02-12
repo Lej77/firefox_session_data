@@ -29,9 +29,10 @@ The optional HTML to PDF converters would probably require a bit of work in orde
 There is a couple of GUI applications that provides some of the functionality that the CLI exposes:
 
 - <https://github.com/Lej77/firefox-session-ui> ([Web demo](https://lej77.github.io/firefox-session-ui/)) (Built with web technology using the [`Dioxus`](https://crates.io/crates/dioxus) and [`Tauri`](https://crates.io/crates/tauri) frameworks)
+- <https://github.com/Lej77/firefox-session-ui-gpui> (Built using the [`GPUI`](https://crates.io/crates/gpui) UI library)
 - <https://github.com/Lej77/firefox-session-ui-gtk4> (Built using the [`GTK4`](https://crates.io/crates/gtk4) UI library)
-- <https://github.com/Lej77/firefox-session-ui-iced> ([Web demo](https://lej77.github.io/firefox-session-ui-iced/)) (Built using the [`iced`](https://crates.io/crates/iced) UI library)
 - <https://github.com/Lej77/firefox-session-ui-egui> ([Web demo](https://lej77.github.io/firefox-session-ui-egui/)) (Built using the [`egui`](https://crates.io/crates/egui) UI library)
+- <https://github.com/Lej77/firefox-session-ui-iced> ([Web demo](https://lej77.github.io/firefox-session-ui-iced/)) (Built using the [`iced`](https://crates.io/crates/iced) UI library)
 
 I wrote some thoughts about my experience with the different UI libraries on reddit:\
 <https://www.reddit.com/r/rust/comments/1mkfxwi/comment/n7j11up/>.
@@ -68,6 +69,8 @@ cargo run --release -- --help
 cargo run --release -- tabs-to-links --firefox-profile=default-release --output=./my-links
 ```
 
+### `cargo install`
+
 You can use `cargo install` to easily build from source without manually cloning the repo:
 
 ```bash
@@ -78,6 +81,21 @@ You can use [`cargo-binstall`](https://github.com/cargo-bins/cargo-binstall) to 
 
 ```bash
 cargo binstall --git https://github.com/Lej77/firefox_session_data.git firefox_session_data
+```
+
+After installing you can update the program using [nabijaczleweli/cargo-update: A cargo subcommand for checking and applying updates to installed executables](https://github.com/nabijaczleweli/cargo-update):
+
+```bash
+cargo install-update --git firefox_session_data
+
+# OR update all installed programs:
+cargo install-update --git --all
+```
+
+You can uninstall uisng:
+
+```bash
+ cargo uninstall firefox_session_data
 ```
 
 ### WebAssembly
